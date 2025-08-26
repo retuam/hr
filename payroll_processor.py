@@ -8,11 +8,11 @@ import tempfile
 from typing import List, Dict, Any, Tuple
 from datetime import datetime
 
-from english_google_drive_downloader import GoogleDriveDownloader
-from english_local_file_handler import LocalFileHandler
-from english_pdf_generator import PayrollPDFGenerator
-from english_google_drive_handler import GoogleDriveHandler
-from english_processing_tracker import ProcessingTracker
+from google_drive_downloader import GoogleDriveDownloader
+from local_file_handler import LocalFileHandler
+from pdf_generator import PayrollPDFGenerator
+from google_drive_handler import GoogleDriveHandler
+from processing_tracker import ProcessingTracker
 
 class FinalEnglishPayrollProcessor:
     def __init__(self):

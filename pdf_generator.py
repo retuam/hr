@@ -187,22 +187,6 @@ class PayrollPDFGenerator:
         bonus_usd_fin = employee.get('bonus_usd_fin', 0)  # This should be 41 from "Bonus USD fin" column
         bonus_local = employee.get('total_rub', 0)  # This should be 3,766 from "Bonus loc cur" column
         
-        print(f"🔍 PDF ГЕНЕРАТОР - ОТЛАДКА ДАННЫХ:")
-        print(f"   sla_percent: {sla_percent}")
-        print(f"   bonus_usd: {bonus_usd} (тип: {type(bonus_usd)})")
-        print(f"   bonus_usd_fin: {bonus_usd_fin} (тип: {type(bonus_usd_fin)})")
-        print(f"   bonus_local: {bonus_local} (тип: {type(bonus_local)})")
-        print(f"   Все данные employee: {employee}")
-        
-        print(f"   ✅ ФИНАЛЬНЫЕ ЗНАЧЕНИЯ ДЛЯ PDF:")
-        print(f"      bonus_usd: {bonus_usd}")
-        print(f"      bonus_usd_fin: {bonus_usd_fin}")
-        
-        # Проверяем что именно попадает в PDF таблицу
-        print(f"   📋 ЧТО ПОПАДАЕТ В PDF ТАБЛИЦУ:")
-        print(f"      Bonus USD, $: ${bonus_usd:.0f}")
-        print(f"      Bonus USD fin, $: ${bonus_usd_fin:.0f}")
-        
         bonus_data = [
             bonus_headers,
             [
