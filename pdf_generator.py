@@ -93,7 +93,7 @@ class PayrollPDFGenerator:
             
             # Base calculation section
             story.extend(self._create_base_section(employee))
-            story.append(Spacer(1, 30))
+            story.append(Spacer(1, 15))
             
             # SLA descriptions section
             story.extend(self._create_methodology_section(employee))
