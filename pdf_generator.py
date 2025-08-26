@@ -238,7 +238,7 @@ class PayrollPDFGenerator:
         
         base_data = [
             ["BASE", company_name],
-            ["% from the base", f"{percent_from_base:.3f}%"],
+            ["% from the base", f"{percent_from_base*100:.3f}%"],
             ["Base in $", f"{base_amount:,.0f}"]
         ]
         
@@ -322,7 +322,7 @@ Variable Pay Access Rules:
             ["", "", ""],
             ["Total USD", f"${employee.get('total_usd', 0):.2f}", ""],
             ["Exchange Rate", f"{employee.get('rate', 0):.2f}", ""],
-            ["Total RUB", "", f"₽{employee.get('total_rub', 0):.2f}"],
+            ["Bonus loc cur", "", f"₽{employee.get('total_rub', 0):.2f}"],
             ["Total RUB (Rounded)", "", f"₽{employee.get('total_rub_rounded', 0):.0f}"]
         ]
         
@@ -360,7 +360,7 @@ Variable Pay Access Rules:
             self.normal_style
         ))
         content.append(Paragraph(
-            f"<b>Percent from Base:</b> {employee.get('percent_from_base', 0):.1f}%",
+            f"<b>Percent from Base:</b> {employee.get('percent_from_base', 0)*100:.3f}%",
             self.normal_style
         ))
         

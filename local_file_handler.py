@@ -215,38 +215,31 @@ class LocalFileHandler:
                 employee = {
                     'id': str(row['id']).strip(),
                     'name': str(row.get('name', '')).strip(),
-                    'base': self._safe_float(row.get('base jan-mar', 0)),  # Base Jan-Mar: 152,555
+                    'base': self._safe_float(row.get('base jan-mar', 0)),  # Base Jan-Mar в рублях: 152,555
                     'location': str(row.get('location', '')).strip(),
                     'percent_from_base': self._safe_float(row.get('% from the base', 0)),  # % from the base: 0.034%
                     'payment': self._safe_float(row.get('payment', 0)),  # Payment: 4
                     'base_periods': self._safe_float(row.get('base periods', 0)),
-                    'bonus_usd': self._safe_float(row.get('bonus usd fin', 0)),  # Bonus USD fin: 41
+                    'bonus_usd': self._safe_float(row.get('bonus usd fin', 0)),  # Bonus USD fin: 41 (в долларах)
                     'sla': self._safe_float(row.get('sla', 0)),  # SLA: 80.00%
                     'sla_bonus': self._safe_float(row.get('sla bonus', 0)),
-                    'total_usd': self._safe_float(row.get('total usd', 0)),
+                    'total_usd': self._safe_float(row.get('bonus usd fin', 0)),  # total_usd = только бонус в долларах
                     'rate': self._safe_float(row.get('rate', 90.8)),
-                    'total_rub': self._safe_float(row.get('bonus loc cur', 0)),  # Bonus loc cur: 3,766
-                    'total_rub_rounded': self._safe_float(row.get('bonus loc cur', 0))  # Убираем округление
+                    'total_rub': self._safe_float(row.get('bonus loc cur', 0)),  # Bonus loc cur: 3,766 (бонус в рублях)
+                    'total_rub_rounded': self._safe_float(row.get('bonus loc cur', 0))  # Без округления
                 }
                 
                 print(f"   ✅ Обработанные данные сотрудника:")
                 for key, value in employee.items():
                     print(f"      {key}: {value}")
                 
-                # Calculate missing fields if needed (БЕЗ ОКРУГЛЕНИЙ!)
-                if not employee['total_usd'] and employee['base'] and employee['bonus_usd']:
-                    employee['total_usd'] = employee['base'] + employee['bonus_usd']
-                    print(f"   🧮 Рассчитал total_usd: {employee['total_usd']}")
-                
-                # Если total_rub уже есть из bonus loc cur, используем его как есть
-                if not employee['total_rub'] and employee['total_usd'] and employee['rate']:
-                    employee['total_rub'] = employee['total_usd'] * employee['rate']
-                    print(f"   🧮 Рассчитал total_rub: {employee['total_rub']}")
-                
-                # total_rub_rounded теперь равен total_rub БЕЗ округления
-                if employee['total_rub']:
-                    employee['total_rub_rounded'] = employee['total_rub']
-                    print(f"   ✅ total_rub_rounded = total_rub (без округления): {employee['total_rub_rounded']}")
+                # НЕ ПЕРЕСЧИТЫВАЕМ - используем готовые значения из таблицы
+                print(f"   ✅ Используем готовые значения из Google Sheets:")
+                print(f"      base (рубли): {employee['base']}")
+                print(f"      bonus_usd (доллары): {employee['bonus_usd']}")
+                print(f"      total_usd (только бонус в $): {employee['total_usd']}")
+                print(f"      total_rub (бонус в рублях): {employee['total_rub']}")
+                print(f"      total_rub_rounded: {employee['total_rub_rounded']}")
                 
                 print(f"   ✅ ФИНАЛЬНЫЕ ДАННЫЕ ДЛЯ PDF:")
                 for key, value in employee.items():
