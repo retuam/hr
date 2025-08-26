@@ -206,7 +206,7 @@ class PayrollPDFGenerator:
             ]
         ]
         
-        bonus_table = Table(bonus_data, colWidths=[1.5*inch, 1.2*inch, 0.9*inch, 0.9*inch, 1.3*inch, 1*inch])
+        bonus_table = Table(bonus_data, colWidths=[2*inch, 1.5*inch, 1.2*inch, 1.2*inch, 1.8*inch, 1.3*inch])
         bonus_table.setStyle(TableStyle([
             # Header row - gray text, smaller font
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica'),

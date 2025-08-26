@@ -212,6 +212,12 @@ class LocalFileHandler:
                 print(f"   📝 Исходные данные строки:")
                 for col in df.columns:
                     print(f"      {col}: '{row[col]}' (тип: {type(row[col])})")
+                
+                print(f"   🔧 ОБРАБОТКА bonus usd КОЛОНКИ:")
+                bonus_usd_raw = row.get('bonus usd', 0)
+                print(f"      Сырые данные: {bonus_usd_raw} (тип: {type(bonus_usd_raw)})")
+                bonus_usd_processed = self._extract_from_series(bonus_usd_raw)
+                print(f"      После обработки: {bonus_usd_processed}")
                 employee = {
                     'id': str(row['id']).strip(),
                     'name': str(row.get('name', '')).strip(),
@@ -220,7 +226,7 @@ class LocalFileHandler:
                     'percent_from_base': self._safe_float(row.get('% from the base', 0)),  # % from the base: 0.034%
                     'payment': self._safe_float(row.get('payment', 0)),  # Payment: 4
                     'base_periods': self._safe_float(row.get('base periods', 0)),
-                    'bonus_usd': self._extract_from_series(row.get('bonus usd', 0)),  # Bonus USD: 52 (исходный бонус)
+                    'bonus_usd': bonus_usd_processed,  # Используем уже обработанное значение
                     'bonus_usd_fin': self._safe_float(row.get('bonus usd fin', 0)),  # Bonus USD fin: 41 (финальный бонус)
                     'sla': self._safe_float(row.get('sla', 0)),  # SLA: 80.00%
                     'sla_bonus': self._safe_float(row.get('sla bonus', 0)),
