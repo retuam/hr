@@ -17,6 +17,7 @@ __pycache__/
 
 # Файлы настроек
 *.env
+.env
 
 # Google Cloud и другие секретные файлы
 *.json
@@ -28,6 +29,7 @@ credentials/
 service-account*.json
 *-credentials.json
 *-service-account.json
+takefinace-1648e5de7102.json
 
 # Временные файлы
 *.tmp
