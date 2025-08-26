@@ -187,12 +187,31 @@ class LocalFileHandler:
         try:
             df = self.read_file(file_path, sheet_name)
             
+            print(f"📊 ДАННЫЕ ИЗ GOOGLE SHEETS:")
+            print(f"   📁 Файл: {file_path}")
+            print(f"   📋 Лист: {sheet_name or 'по умолчанию'}")
+            print(f"   📏 Всего строк: {len(df)}")
+            print(f"   📊 Колонки: {list(df.columns)}")
+            
+            # Show first few rows
+            print(f"\n🔍 ПЕРВЫЕ 3 СТРОКИ:")
+            for i, (idx, row) in enumerate(df.head(3).iterrows()):
+                print(f"   Строка {i+1}:")
+                for col in df.columns:
+                    print(f"      {col}: {row[col]}")
+                print()
+            
             # Filter rows with valid ID
             df_filtered = df[df['id'].notna() & (df['id'] != '')].copy()
+            print(f"📋 После фильтрации по ID: {len(df_filtered)} строк")
             
             employees = []
             
-            for _, row in df_filtered.iterrows():
+            for row_num, (_, row) in enumerate(df_filtered.iterrows(), 1):
+                print(f"\n👤 ОБРАБОТКА СОТРУДНИКА #{row_num}:")
+                print(f"   📝 Исходные данные строки:")
+                for col in df.columns:
+                    print(f"      {col}: '{row[col]}' (тип: {type(row[col])})")
                 employee = {
                     'id': str(row['id']).strip(),
                     'name': str(row.get('name', '')).strip(),
@@ -210,15 +229,26 @@ class LocalFileHandler:
                     'total_rub_rounded': self._safe_float(row.get('total rub rounded', 0))
                 }
                 
+                print(f"   ✅ Обработанные данные сотрудника:")
+                for key, value in employee.items():
+                    print(f"      {key}: {value}")
+                
                 # Calculate missing fields if needed
                 if not employee['total_usd'] and employee['base'] and employee['bonus_usd']:
                     employee['total_usd'] = employee['base'] + employee['bonus_usd']
+                    print(f"   🧮 Рассчитал total_usd: {employee['total_usd']}")
                 
                 if not employee['total_rub'] and employee['total_usd'] and employee['rate']:
                     employee['total_rub'] = employee['total_usd'] * employee['rate']
+                    print(f"   🧮 Рассчитал total_rub: {employee['total_rub']}")
                 
                 if not employee['total_rub_rounded'] and employee['total_rub']:
                     employee['total_rub_rounded'] = round(employee['total_rub'])
+                    print(f"   🧮 Рассчитал total_rub_rounded: {employee['total_rub_rounded']}")
+                
+                print(f"   ✅ ФИНАЛЬНЫЕ ДАННЫЕ ДЛЯ PDF:")
+                for key, value in employee.items():
+                    print(f"      {key}: {value}")
                 
                 employees.append(employee)
             
