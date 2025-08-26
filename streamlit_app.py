@@ -33,9 +33,20 @@ def authenticate():
     # Check for persistent authentication using query params or cookies
     if not st.session_state.authenticated:
         # Try to restore authentication from URL params (for development)
-        query_params = st.query_params
-        if query_params.get("auth") == "true":
-            st.session_state.authenticated = True
+        try:
+            # For Streamlit 1.28+
+            query_params = st.query_params
+            if query_params.get("auth") == "true":
+                st.session_state.authenticated = True
+        except AttributeError:
+            # For older Streamlit versions
+            try:
+                query_params = st.experimental_get_query_params()
+                if query_params.get("auth", [None])[0] == "true":
+                    st.session_state.authenticated = True
+            except:
+                # Fallback - no persistent auth for very old versions
+                pass
     
     if not st.session_state.authenticated:
         st.title("Payroll System Authentication")
@@ -52,7 +63,16 @@ def authenticate():
                 if username == admin_username and password == admin_password:
                     st.session_state.authenticated = True
                     # Set query param to maintain auth state on refresh
-                    st.query_params["auth"] = "true"
+                    try:
+                        # For Streamlit 1.28+
+                        st.query_params["auth"] = "true"
+                    except AttributeError:
+                        # For older Streamlit versions
+                        try:
+                            st.experimental_set_query_params(auth="true")
+                        except:
+                            # Fallback - no persistent auth for very old versions
+                            pass
                     st.success("Authentication successful!")
                     st.rerun()
                 else:
@@ -82,7 +102,15 @@ def main():
     # Logout button
     if st.sidebar.button("🚪 Logout"):
         st.session_state.authenticated = False
-        st.query_params.clear()
+        try:
+            # For Streamlit 1.28+
+            st.query_params.clear()
+        except AttributeError:
+            # For older Streamlit versions
+            try:
+                st.experimental_set_query_params()
+            except:
+                pass
         st.rerun()
     
     st.sidebar.markdown("---")
