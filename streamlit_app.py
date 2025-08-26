@@ -38,14 +38,17 @@ def authenticate():
             submit = st.form_submit_button("Login")
             
             if submit:
-                if username == "admin" and password == "admin":
+                admin_username = os.getenv('ADMIN_USERNAME')
+                admin_password = os.getenv('ADMIN_PASSWORD')
+                
+                if username == admin_username and password == admin_password:
                     st.session_state.authenticated = True
                     st.success("Authentication successful!")
                     st.rerun()
                 else:
                     st.error("Invalid credentials")
         
-        st.info("Use credentials: admin / admin")
+        st.info("Use admin credentials from .env file")
         return False
     
     return True
