@@ -96,7 +96,7 @@ class PayrollPDFGenerator:
             story.append(Spacer(1, 30))
             
             # SLA descriptions section
-            story.extend(self._create_sla_section())
+            story.extend(self._create_methodology_section(employee))
             
             # Build PDF
             doc.build(story)
@@ -264,51 +264,6 @@ class PayrollPDFGenerator:
         content.append(base_table)
         return content
     
-    def _create_sla_section(self) -> list:
-        """Create SLA descriptions section"""
-        content = []
-        
-        # Section title
-        title = Paragraph("<b>SLA Descriptions</b>", 
-                         ParagraphStyle('SLATitle', fontSize=16, alignment=TA_CENTER, spaceAfter=20))
-        content.append(title)
-        
-        # Real SLA methodology - single text block, small gray font
-        sla_text = """SLA Calculation Methodology:
-
-Key Performance Indicators:
-• Analytics Standards: All sites with GA and YM must comply with standards
-• Sprint Task Completion: Percentage of tasks moved from 'In Progress' to 'Done'
-• Dashboard Functionality: Working dashboard in each launched business unit
-
-Color Coding System:
-• Green: All standards met, 100% completion, fully functional dashboards
-• Yellow: Minor issues resolved within 2 weeks, 90-99% completion
-• Red: Data loss/restrictions, <90% completion, missing dashboards >1 week
-
-Variable Pay Access Rules:
-• 100% - All Green indicators
-• 75% - 2 Green, 1 Yellow
-• 50% - 2 Yellow, 1 Green
-• 0% - More than 1 Red indicator"""
-        
-        # Create single table cell with all text
-        sla_table = Table([[sla_text]], colWidths=[6*inch])
-        sla_table.setStyle(TableStyle([
-            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, -1), 9),  # Smaller font
-            ('TEXTCOLOR', (0, 0), (-1, -1), colors.grey),  # Gray color
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            # NO BORDERS! Only thin outer border like in example
-            ('BOX', (0, 0), (-1, -1), 0.5, colors.lightgrey),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('TOPPADDING', (0, 0), (-1, -1), 15),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 15),
-            ('LEFTPADDING', (0, 0), (-1, -1), 15),
-        ]))
-        
-        content.append(sla_table)
-        return content
     
     def _create_payroll_calculations_section(self, employee: Dict[str, Any]) -> list:
         """Create payroll calculations section"""
@@ -370,35 +325,47 @@ Variable Pay Access Rules:
         
         return content
     
-    def _create_methodology_section(self) -> list:
-        """Create calculation methodology section"""
+    def _create_methodology_section(self, employee: Dict[str, Any]) -> list:
+        """Create calculation methodology section based on employee's SLA ID"""
         content = []
         
         content.append(Paragraph("CALCULATION METHODOLOGY", self.header_style))
         
-        methodology_text = """
-        <b>Base Salary Calculation:</b><br/>
-        The base salary is calculated according to the employee's contract and position level.
+        # Get SLA ID from employee data
+        sla_id = employee.get('sla_id', 1)
+        print(f"📋 Создаем методологию для SLA ID: {sla_id}")
         
-        <br/><br/><b>Bonus Calculation:</b><br/>
-        • Performance bonuses are calculated based on individual and team performance metrics<br/>
-        • SLA bonuses are awarded for meeting or exceeding service level agreements<br/>
-        • Additional bonuses may be awarded for exceptional performance or special projects
-        
-        <br/><br/><b>SLA Criteria:</b><br/>
-        • SLA ≥ 95%: Full SLA bonus<br/>
-        • SLA 90-94%: 75% of SLA bonus<br/>
-        • SLA 85-89%: 50% of SLA bonus<br/>
-        • SLA < 85%: No SLA bonus
-        
-        <br/><br/><b>Currency Conversion:</b><br/>
-        All calculations are performed in USD and converted to RUB using the current exchange rate.
-        The final amount is rounded to the nearest whole ruble.
-        
-        <br/><br/><b>Deductions:</b><br/>
-        This payroll slip shows gross amounts before any tax deductions or other withholdings.
-        Net amounts will be calculated separately according to applicable tax regulations.
-        """
+        # Load methodology text from SLA descriptions handler
+        try:
+            from sla_descriptions_handler import SLADescriptionsHandler
+            sla_handler = SLADescriptionsHandler()
+            methodology_text = sla_handler.get_description_by_sla_id(sla_id)
+        except Exception as e:
+            print(f"❌ Ошибка загрузки SLA описания: {e}")
+            # Fallback to default text
+            methodology_text = """
+            <b>Base Salary Calculation:</b><br/>
+            The base salary is calculated according to the employee's contract and position level.
+            
+            <br/><br/><b>Bonus Calculation:</b><br/>
+            • Performance bonuses are calculated based on individual and team performance metrics<br/>
+            • SLA bonuses are awarded for meeting or exceeding service level agreements<br/>
+            • Additional bonuses may be awarded for exceptional performance or special projects
+            
+            <br/><br/><b>SLA Criteria:</b><br/>
+            • SLA ≥ 95%: Full SLA bonus<br/>
+            • SLA 90-94%: 75% of SLA bonus<br/>
+            • SLA 85-89%: 50% of SLA bonus<br/>
+            • SLA < 85%: No SLA bonus
+            
+            <br/><br/><b>Currency Conversion:</b><br/>
+            All calculations are performed in USD and converted to RUB using the current exchange rate.
+            The final amount is rounded to the nearest whole ruble.
+            
+            <br/><br/><b>Deductions:</b><br/>
+            This payroll slip shows gross amounts before any tax deductions or other withholdings.
+            Net amounts will be calculated separately according to applicable tax regulations.
+            """
         
         content.append(Paragraph(methodology_text, self.normal_style))
         return content

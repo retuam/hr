@@ -218,22 +218,28 @@ class LocalFileHandler:
                 print(f"      Сырые данные: {bonus_usd_raw} (тип: {type(bonus_usd_raw)})")
                 bonus_usd_processed = self._extract_from_series(bonus_usd_raw)
                 print(f"      После обработки: {bonus_usd_processed}")
+                # Extract SLA ID
+                sla_id_raw = row.get('sla id', 1)  # Default to 1 if not found
+                sla_id = int(self._safe_float(sla_id_raw)) if pd.notna(sla_id_raw) else 1
+                print(f"   🔧 ОБРАБОТКА SLA ID: {sla_id_raw} -> {sla_id}")
+                
                 employee = {
                     'id': str(row['id']).strip(),
-                    'name': str(row.get('name', '')).strip(),
-                    'base': self._safe_float(row.get('base jan-mar', 0)),  # Base Jan-Mar в рублях: 152,555
+                    'name': str(row['name']).strip(),
+                    'base': self._safe_float(row.get('base jan-mar', 0)),
                     'location': str(row.get('location', '')).strip(),
-                    'percent_from_base': self._safe_float(row.get('% from the base', 0)),  # % from the base: 0.034%
-                    'payment': self._safe_float(row.get('payment', 0)),  # Payment: 4
+                    'percent_from_base': self._safe_float(row.get('% from the base', 0)),
+                    'payment': self._safe_float(row.get('payment', 0)),
                     'base_periods': self._safe_float(row.get('base periods', 0)),
-                    'bonus_usd': bonus_usd_processed,  # Используем уже обработанное значение
-                    'bonus_usd_fin': self._safe_float(row.get('bonus usd fin', 0)),  # Bonus USD fin: 41 (финальный бонус)
-                    'sla': self._safe_float(row.get('sla', 0)),  # SLA: 80.00%
+                    'bonus_usd': bonus_usd_processed,
+                    'bonus_usd_fin': self._safe_float(row.get('bonus usd fin', 0)),
+                    'sla': self._safe_float(row.get('sla', 0)),
                     'sla_bonus': self._safe_float(row.get('sla bonus', 0)),
-                    'total_usd': self._safe_float(row.get('bonus usd fin', 0)),  # total_usd = только бонус в долларах
+                    'sla_id': sla_id,
+                    'total_usd': self._safe_float(row.get('total usd', 0)),
                     'rate': self._safe_float(row.get('rate', 90.8)),
-                    'total_rub': self._safe_float(row.get('bonus loc cur', 0)),  # Bonus loc cur: 3,766 (бонус в рублях)
-                    'total_rub_rounded': self._safe_float(row.get('bonus loc cur', 0))  # Без округления
+                    'total_rub': self._safe_float(row.get('bonus loc cur', 0)),
+                    'total_rub_rounded': self._safe_float(row.get('total rub rounded', 0))
                 }
                 
                 print(f"   ✅ Обработанные данные сотрудника:")

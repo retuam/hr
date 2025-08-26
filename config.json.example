@@ -3,6 +3,7 @@
   "google_file_id": "your_google_sheets_file_id_here",
   "google_folder_id": "your_google_drive_folder_id_for_pdfs",
   "csv_folder_id": "your_google_drive_folder_id_for_csv_reports",
+  "sla_descriptions_file_id": "your_sla_descriptions_spreadsheet_id_here",
   "default_sheet_name": null,
   "processing_settings": {
     "force_recreate": false,

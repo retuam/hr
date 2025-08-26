@@ -178,6 +178,10 @@ class ConfigManager:
     def get_cleanup_days(self) -> int:
         """Get number of days for session cleanup"""
         return self.get('processing_settings.cleanup_old_sessions_days', 30)
+    
+    def get_sla_descriptions_file_id(self) -> str:
+        """Get SLA descriptions spreadsheet file ID"""
+        return self.get('sla_descriptions_file_id', '')
 
 # Global configuration instance
 config = ConfigManager()
