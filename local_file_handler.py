@@ -267,8 +267,22 @@ class LocalFileHandler:
         try:
             if pd.isna(value) or value == '':
                 return 0.0
+            
+            # Handle pandas Series objects - extract first non-null value
+            if isinstance(value, pd.Series):
+                print(f"   🔧 Обрабатываю pandas Series: {value}")
+                non_null_values = value.dropna()
+                if len(non_null_values) > 0:
+                    result = float(non_null_values.iloc[0])
+                    print(f"   ✅ Извлек из Series: {result}")
+                    return result
+                else:
+                    print(f"   ❌ Series пустой, возвращаю 0.0")
+                    return 0.0
+            
             return float(value)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
+            print(f"   ❌ Ошибка конвертации {value} в float: {e}")
             return 0.0
 
 if __name__ == "__main__":
