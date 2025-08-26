@@ -181,9 +181,9 @@ class PayrollPDFGenerator:
         ]
         
         # Bonus data - get real values from employee data
-        sla_percent = employee.get('sla', 0)
-        bonus_usd = employee.get('bonus_usd', 0)
-        bonus_local = employee.get('bonus_loc_cur', 0)
+        sla_percent = employee.get('sla', 0) * 100  # Convert to percentage
+        bonus_usd = employee.get('bonus_usd', 0)  # This should be 52 from "Bonus USD" column
+        bonus_local = employee.get('total_rub', 0)  # This should be 3,766 from "Bonus loc cur" column
         
         bonus_data = [
             bonus_headers,
@@ -318,6 +318,7 @@ Variable Pay Access Rules:
             ["Description", "Amount (USD)", "Amount (RUB)"],
             ["Base Salary", f"${employee.get('base', 0):.2f}", ""],
             ["Bonus USD", f"${employee.get('bonus_usd', 0):.2f}", ""],
+            ["Bonus USD fin", f"${employee.get('bonus_usd_fin', 0):.2f}", ""],
             ["SLA Bonus", f"${employee.get('sla_bonus', 0):.2f}", ""],
             ["", "", ""],
             ["Total USD", f"${employee.get('total_usd', 0):.2f}", ""],
