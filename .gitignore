@@ -1,0 +1,34 @@
+# Файлы виртуального окружения
+venv/
+.env/
+
+# Системные и кэш-файлы
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE файлы
+.idea/
+.vscode/
+
+# Логи
+*.log
+
+# Файлы настроек
+*.env
+
+# Google Cloud и другие секретные файлы
+*.json
+!config.json
+!processing_status.json
+!package.json
+!package-lock.json
+credentials/
+service-account*.json
+*-credentials.json
+*-service-account.json
+
+# Временные файлы
+*.tmp
+*.temp

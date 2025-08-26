@@ -1,0 +1,22 @@
+{
+  "google_credentials_file": "takefinace-1648e5de7102.json",
+  "google_file_id": "",
+  "google_folder_id": "",
+  "csv_folder_id": "",
+  "default_sheet_name": null,
+  "processing_settings": {
+    "force_recreate": false,
+    "generate_csv": true,
+    "cleanup_old_sessions_days": 30
+  },
+  "pdf_settings": {
+    "company_name": "TakeFinance",
+    "default_currency": "USD",
+    "date_format": "%Y-%m-%d"
+  },
+  "paths": {
+    "status_file": "processing_status.json",
+    "temp_directory": "temp",
+    "logs_directory": "logs"
+  }
+}

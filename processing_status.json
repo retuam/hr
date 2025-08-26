@@ -1,0 +1,29 @@
+{
+  "employees": {
+    "001": {
+      "employee_id": "001",
+      "employee_name": "Test User",
+      "status": "processed",
+      "drive_file_id": "link",
+      "processed_at": "2025-08-21T16:47:34.030750",
+      "session_id": "0fdeb6b4-9dd0-4e6b-b942-6be8512a9253"
+    }
+  },
+  "sessions": {
+    "0fdeb6b4-9dd0-4e6b-b942-6be8512a9253": {
+      "session_id": "0fdeb6b4-9dd0-4e6b-b942-6be8512a9253",
+      "source_file_id": "test",
+      "output_folder_id": "test",
+      "started_at": "2025-08-21T16:47:34.029636",
+      "status": "completed",
+      "total_employees": 0,
+      "processed_count": 1,
+      "failed_count": 0,
+      "source_file_name": null,
+      "error": null,
+      "finished_at": "2025-08-21T16:47:34.031583"
+    }
+  },
+  "created_at": "2025-08-21T16:47:34.028635",
+  "last_updated": "2025-08-21T16:47:34.031583"
+}
