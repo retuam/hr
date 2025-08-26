@@ -215,17 +215,17 @@ class LocalFileHandler:
                 employee = {
                     'id': str(row['id']).strip(),
                     'name': str(row.get('name', '')).strip(),
-                    'base': self._safe_float(row.get('base', 0)),
+                    'base': self._safe_float(row.get('base jan-mar', 0)),  # Используем правильную колонку для базы
                     'location': str(row.get('location', '')).strip(),
                     'percent_from_base': self._safe_float(row.get('% from the base', row.get('% from base', 0))),
                     'payment': self._safe_float(row.get('payment', 0)),
                     'base_periods': self._safe_float(row.get('base periods', 0)),
-                    'bonus_usd': self._safe_float(row.get('bonus usd', row.get('bonus usd fin', 0))),
+                    'bonus_usd': self._safe_float(row.get('bonus usd fin', 0)),  # Используем финальный бонус
                     'sla': self._safe_float(row.get('sla', 0)),
                     'sla_bonus': self._safe_float(row.get('sla bonus', 0)),
                     'total_usd': self._safe_float(row.get('total usd', 0)),
-                    'rate': self._safe_float(row.get('rate', 0)),
-                    'total_rub': self._safe_float(row.get('total rub', 0)),
+                    'rate': self._safe_float(row.get('rate', 90.8)),  # Добавляем дефолтный курс
+                    'total_rub': self._safe_float(row.get('bonus loc cur', 0)),  # Используем локальную валюту
                     'total_rub_rounded': self._safe_float(row.get('total rub rounded', 0))
                 }
                 
@@ -238,13 +238,19 @@ class LocalFileHandler:
                     employee['total_usd'] = employee['base'] + employee['bonus_usd']
                     print(f"   🧮 Рассчитал total_usd: {employee['total_usd']}")
                 
+                # Если total_rub уже есть из bonus loc cur, используем его, иначе рассчитываем
                 if not employee['total_rub'] and employee['total_usd'] and employee['rate']:
                     employee['total_rub'] = employee['total_usd'] * employee['rate']
                     print(f"   🧮 Рассчитал total_rub: {employee['total_rub']}")
                 
+                # Если total_rub_rounded не задан, округляем total_rub
                 if not employee['total_rub_rounded'] and employee['total_rub']:
                     employee['total_rub_rounded'] = round(employee['total_rub'])
                     print(f"   🧮 Рассчитал total_rub_rounded: {employee['total_rub_rounded']}")
+                elif not employee['total_rub_rounded'] and employee['total_rub']:
+                    # Если total_rub уже есть, просто округляем его
+                    employee['total_rub_rounded'] = round(employee['total_rub'])
+                    print(f"   🧮 Округлил total_rub_rounded: {employee['total_rub_rounded']}")
                 
                 print(f"   ✅ ФИНАЛЬНЫЕ ДАННЫЕ ДЛЯ PDF:")
                 for key, value in employee.items():
