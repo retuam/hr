@@ -6,6 +6,8 @@ Complete web interface for automated payroll slip generation
 import streamlit as st
 import pandas as pd
 import os
+import hashlib
+import time
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -24,29 +26,60 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+def get_session_file():
+    """Get session file path based on browser session"""
+    # Create a simple session identifier
+    session_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
+    if "session_id" not in st.session_state:
+        st.session_state.session_id = session_id
+    
+    session_file = f".auth_session_{st.session_state.session_id}"
+    return session_file
+
+def is_authenticated_persistent():
+    """Check if user is authenticated using persistent storage"""
+    session_file = get_session_file()
+    if os.path.exists(session_file):
+        try:
+            with open(session_file, 'r') as f:
+                timestamp = float(f.read().strip())
+                # Session valid for 24 hours
+                if time.time() - timestamp < 86400:
+                    return True
+                else:
+                    # Clean up expired session
+                    os.remove(session_file)
+        except:
+            pass
+    return False
+
+def set_authenticated_persistent():
+    """Mark user as authenticated in persistent storage"""
+    session_file = get_session_file()
+    try:
+        with open(session_file, 'w') as f:
+            f.write(str(time.time()))
+    except:
+        pass
+
+def clear_authenticated_persistent():
+    """Clear persistent authentication"""
+    session_file = get_session_file()
+    try:
+        if os.path.exists(session_file):
+            os.remove(session_file)
+    except:
+        pass
+
 def authenticate():
     """Simple authentication system with persistent session"""
     # Initialize authentication state
     if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
+        st.session_state.authenticated = is_authenticated_persistent()
     
-    # Check for persistent authentication using query params or cookies
+    # If not authenticated in session_state, check persistent storage
     if not st.session_state.authenticated:
-        # Try to restore authentication from URL params (for development)
-        try:
-            # For Streamlit 1.28+
-            query_params = st.query_params
-            if query_params.get("auth") == "true":
-                st.session_state.authenticated = True
-        except AttributeError:
-            # For older Streamlit versions
-            try:
-                query_params = st.experimental_get_query_params()
-                if query_params.get("auth", [None])[0] == "true":
-                    st.session_state.authenticated = True
-            except:
-                # Fallback - no persistent auth for very old versions
-                pass
+        st.session_state.authenticated = is_authenticated_persistent()
     
     if not st.session_state.authenticated:
         st.title("Payroll System Authentication")
@@ -62,17 +95,8 @@ def authenticate():
                 
                 if username == admin_username and password == admin_password:
                     st.session_state.authenticated = True
-                    # Set query param to maintain auth state on refresh
-                    try:
-                        # For Streamlit 1.28+
-                        st.query_params["auth"] = "true"
-                    except AttributeError:
-                        # For older Streamlit versions
-                        try:
-                            st.experimental_set_query_params(auth="true")
-                        except:
-                            # Fallback - no persistent auth for very old versions
-                            pass
+                    # Save authentication to persistent storage
+                    set_authenticated_persistent()
                     st.success("Authentication successful!")
                     st.rerun()
                 else:
@@ -102,15 +126,8 @@ def main():
     # Logout button
     if st.sidebar.button("🚪 Logout"):
         st.session_state.authenticated = False
-        try:
-            # For Streamlit 1.28+
-            st.query_params.clear()
-        except AttributeError:
-            # For older Streamlit versions
-            try:
-                st.experimental_set_query_params()
-            except:
-                pass
+        # Clear persistent authentication
+        clear_authenticated_persistent()
         st.rerun()
     
     st.sidebar.markdown("---")
