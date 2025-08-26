@@ -6,6 +6,7 @@ Complete web interface for automated payroll slip generation
 import streamlit as st
 import pandas as pd
 import os
+import time
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -24,11 +25,43 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+def check_auth_file():
+    """Check if auth file exists and is valid"""
+    auth_file = ".streamlit_auth"
+    if os.path.exists(auth_file):
+        try:
+            with open(auth_file, 'r') as f:
+                timestamp = float(f.read().strip())
+                # Valid for 24 hours
+                if time.time() - timestamp < 86400:
+                    return True
+                else:
+                    os.remove(auth_file)
+        except:
+            pass
+    return False
+
+def set_auth_file():
+    """Create auth file"""
+    try:
+        with open(".streamlit_auth", 'w') as f:
+            f.write(str(time.time()))
+    except:
+        pass
+
+def clear_auth_file():
+    """Remove auth file"""
+    try:
+        if os.path.exists(".streamlit_auth"):
+            os.remove(".streamlit_auth")
+    except:
+        pass
+
 def authenticate():
     """Simple authentication system"""
     # Initialize authentication state
     if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
+        st.session_state.authenticated = check_auth_file()
     
     if not st.session_state.authenticated:
         st.title("Payroll System Authentication")
@@ -44,6 +77,7 @@ def authenticate():
                 
                 if username == admin_username and password == admin_password:
                     st.session_state.authenticated = True
+                    set_auth_file()
                     st.success("Authentication successful!")
                     st.rerun()
                 else:
@@ -73,6 +107,7 @@ def main():
     # Logout button
     if st.sidebar.button("🚪 Logout"):
         st.session_state.authenticated = False
+        clear_auth_file()
         st.rerun()
     
     st.sidebar.markdown("---")
