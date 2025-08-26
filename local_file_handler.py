@@ -220,7 +220,7 @@ class LocalFileHandler:
                     'percent_from_base': self._safe_float(row.get('% from the base', 0)),  # % from the base: 0.034%
                     'payment': self._safe_float(row.get('payment', 0)),  # Payment: 4
                     'base_periods': self._safe_float(row.get('base periods', 0)),
-                    'bonus_usd': self._safe_float(row.get('bonus usd', 0)),  # Bonus USD: 52 (исходный бонус)
+                    'bonus_usd': self._extract_from_series(row.get('bonus usd', 0)),  # Bonus USD: 52 (исходный бонус)
                     'bonus_usd_fin': self._safe_float(row.get('bonus usd fin', 0)),  # Bonus USD fin: 41 (финальный бонус)
                     'sla': self._safe_float(row.get('sla', 0)),  # SLA: 80.00%
                     'sla_bonus': self._safe_float(row.get('sla bonus', 0)),
@@ -283,6 +283,37 @@ class LocalFileHandler:
             return float(value)
         except (ValueError, TypeError) as e:
             print(f"   ❌ Ошибка конвертации {value} в float: {e}")
+            return 0.0
+    
+    def _extract_from_series(self, value) -> float:
+        """
+        Extract numeric value from pandas Series or regular value
+        
+        Args:
+            value: Value to extract (could be Series or regular value)
+            
+        Returns:
+            Float value or 0.0
+        """
+        try:
+            if pd.isna(value) or value == '':
+                return 0.0
+            
+            # Handle pandas Series objects - extract first non-null value
+            if isinstance(value, pd.Series):
+                print(f"   🔧 СПЕЦИАЛЬНАЯ ОБРАБОТКА pandas Series: {value}")
+                non_null_values = value.dropna()
+                if len(non_null_values) > 0:
+                    result = float(non_null_values.iloc[0])
+                    print(f"   ✅ ИЗВЛЕК ИЗ SERIES: {result}")
+                    return result
+                else:
+                    print(f"   ❌ Series пустой, возвращаю 0.0")
+                    return 0.0
+            
+            return float(value)
+        except (ValueError, TypeError) as e:
+            print(f"   ❌ Ошибка извлечения {value}: {e}")
             return 0.0
 
 if __name__ == "__main__":
