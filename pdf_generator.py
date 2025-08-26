@@ -176,6 +176,7 @@ class PayrollPDFGenerator:
             "Type of bonus",
             "% of SLA achievement*", 
             "Bonus USD, $",
+            "Bonus USD fin, $",
             "Bonus in local currency",
             "Calculation period"
         ]
@@ -183,6 +184,7 @@ class PayrollPDFGenerator:
         # Bonus data - get real values from employee data
         sla_percent = employee.get('sla', 0) * 100  # Convert to percentage
         bonus_usd = employee.get('bonus_usd', 0)  # This should be 52 from "Bonus USD" column
+        bonus_usd_fin = employee.get('bonus_usd_fin', 0)  # This should be 41 from "Bonus USD fin" column
         bonus_local = employee.get('total_rub', 0)  # This should be 3,766 from "Bonus loc cur" column
         
         bonus_data = [
@@ -191,12 +193,13 @@ class PayrollPDFGenerator:
                 "Bonus from SLA",
                 f"{sla_percent:.0f}%",
                 f"${bonus_usd:.0f}",
+                f"${bonus_usd_fin:.0f}",
                 f"₽{bonus_local:,.0f}",
                 "Quarter"
             ]
         ]
         
-        bonus_table = Table(bonus_data, colWidths=[1.4*inch, 1.2*inch, 1*inch, 1.4*inch, 1*inch])
+        bonus_table = Table(bonus_data, colWidths=[1.2*inch, 1*inch, 0.8*inch, 0.8*inch, 1.2*inch, 1*inch])
         bonus_table.setStyle(TableStyle([
             # Header row - gray text, smaller font
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica'),
