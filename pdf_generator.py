@@ -175,8 +175,8 @@ class PayrollPDFGenerator:
         bonus_headers = [
             "Type of bonus",
             "% of SLA achievement*", 
-            "Bonus USD, $",
-            "Bonus USD fin, $",
+            "Bonus, $",
+            "Bonus fin, $",
             "Bonus in local currency",
             "Calculation period"
         ]
@@ -200,8 +200,8 @@ class PayrollPDFGenerator:
         
         # Проверяем что именно попадает в PDF таблицу
         print(f"   📋 ЧТО ПОПАДАЕТ В PDF ТАБЛИЦУ:")
-        print(f"      Bonus, $: ${bonus_usd:.0f}")
-        print(f"      Bonus fin, $: ${bonus_usd_fin:.0f}")
+        print(f"      Bonus USD, $: ${bonus_usd:.0f}")
+        print(f"      Bonus USD fin, $: ${bonus_usd_fin:.0f}")
         
         bonus_data = [
             bonus_headers,
