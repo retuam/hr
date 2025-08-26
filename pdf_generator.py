@@ -187,6 +187,13 @@ class PayrollPDFGenerator:
         bonus_usd_fin = employee.get('bonus_usd_fin', 0)  # This should be 41 from "Bonus USD fin" column
         bonus_local = employee.get('total_rub', 0)  # This should be 3,766 from "Bonus loc cur" column
         
+        print(f"🔍 PDF ГЕНЕРАТОР - ОТЛАДКА ДАННЫХ:")
+        print(f"   sla_percent: {sla_percent}")
+        print(f"   bonus_usd: {bonus_usd} (тип: {type(bonus_usd)})")
+        print(f"   bonus_usd_fin: {bonus_usd_fin} (тип: {type(bonus_usd_fin)})")
+        print(f"   bonus_local: {bonus_local} (тип: {type(bonus_local)})")
+        print(f"   Все данные employee: {employee}")
+        
         bonus_data = [
             bonus_headers,
             [
@@ -199,7 +206,7 @@ class PayrollPDFGenerator:
             ]
         ]
         
-        bonus_table = Table(bonus_data, colWidths=[1.2*inch, 1*inch, 0.8*inch, 0.8*inch, 1.2*inch, 1*inch])
+        bonus_table = Table(bonus_data, colWidths=[1*inch, 0.8*inch, 0.6*inch, 0.6*inch, 1*inch, 0.8*inch])
         bonus_table.setStyle(TableStyle([
             # Header row - gray text, smaller font
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica'),
@@ -209,7 +216,7 @@ class PayrollPDFGenerator:
             
             # Data row - normal text
             ('FONTNAME', (0, 1), (-1, 1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, 1), 11),
+            ('FONTSIZE', (0, 1), (-1, 1), 9),
             ('ALIGN', (0, 1), (-1, 1), 'CENTER'),
             
             # NO BORDERS! Only thin separator line under header
