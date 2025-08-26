@@ -302,10 +302,7 @@ class LocalFileHandler:
             Float value or 0.0
         """
         try:
-            if pd.isna(value) or value == '':
-                return 0.0
-            
-            # Handle pandas Series objects - extract first non-null value
+            # Handle pandas Series objects first
             if isinstance(value, pd.Series):
                 print(f"   🔧 СПЕЦИАЛЬНАЯ ОБРАБОТКА pandas Series: {value}")
                 non_null_values = value.dropna()
@@ -316,6 +313,10 @@ class LocalFileHandler:
                 else:
                     print(f"   ❌ Series пустой, возвращаю 0.0")
                     return 0.0
+            
+            # Handle regular values
+            if pd.isna(value) or value == '':
+                return 0.0
             
             return float(value)
         except (ValueError, TypeError) as e:
