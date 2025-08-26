@@ -21,7 +21,7 @@ __pycache__/
 
 # Google Cloud и другие секретные файлы
 *.json
-!config.json
+!config.json.example
 !processing_status.json
 !package.json
 !package-lock.json
