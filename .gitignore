@@ -34,3 +34,6 @@ takefinace-1648e5de7102.json
 # Временные файлы
 *.tmp
 *.temp
+
+# Файлы сессий авторизации
+.auth_session_*
