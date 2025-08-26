@@ -521,6 +521,12 @@ def show_settings_page():
                 help="Default Google Drive folder ID for CSV reports"
             )
             
+            sla_descriptions_file_id = st.text_input(
+                "SLA Descriptions Spreadsheet ID",
+                value=config.get_sla_descriptions_file_id(),
+                help="Google Sheets file ID with SLA methodology descriptions"
+            )
+            
             default_sheet_name = st.text_input(
                 "Default Sheet Name",
                 value=config.get_default_sheet_name() or "",
@@ -532,6 +538,7 @@ def show_settings_page():
                 'google_file_id': google_file_id,
                 'google_folder_id': google_folder_id,
                 'csv_folder_id': csv_folder_id,
+                'sla_descriptions_file_id': sla_descriptions_file_id,
                 'default_sheet_name': default_sheet_name if default_sheet_name else None
             })
             config.save_config()
