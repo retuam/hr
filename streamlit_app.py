@@ -25,9 +25,17 @@ st.set_page_config(
 )
 
 def authenticate():
-    """Simple authentication system"""
+    """Simple authentication system with persistent session"""
+    # Initialize authentication state
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
+    
+    # Check for persistent authentication using query params or cookies
+    if not st.session_state.authenticated:
+        # Try to restore authentication from URL params (for development)
+        query_params = st.query_params
+        if query_params.get("auth") == "true":
+            st.session_state.authenticated = True
     
     if not st.session_state.authenticated:
         st.title("Payroll System Authentication")
@@ -43,6 +51,8 @@ def authenticate():
                 
                 if username == admin_username and password == admin_password:
                     st.session_state.authenticated = True
+                    # Set query param to maintain auth state on refresh
+                    st.query_params["auth"] = "true"
                     st.success("Authentication successful!")
                     st.rerun()
                 else:
@@ -68,17 +78,19 @@ def main():
     
     # Sidebar navigation
     st.sidebar.title("Payroll System")
+    
+    # Logout button
+    if st.sidebar.button("🚪 Logout"):
+        st.session_state.authenticated = False
+        st.query_params.clear()
+        st.rerun()
+    
     st.sidebar.markdown("---")
     
     page = st.sidebar.selectbox(
         "Select Page",
         ["Home", "File Preview", "Process Payrolls", "Statistics", "Settings"]
     )
-    
-    # Logout button
-    if st.sidebar.button("Logout"):
-        st.session_state.authenticated = False
-        st.rerun()
     
     # Route to selected page
     if page == "Home":
